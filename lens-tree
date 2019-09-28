@@ -1,0 +1,20 @@
+#!/bin/bash
+
+INPUT_TREE="${1?<input> required}"
+
+# redirect all output to stderr
+{
+  # export git tree to disk
+  git holo lens export-tree "${INPUT_TREE}"
+
+  # execute compilation
+  pushd "${GIT_WORK_TREE}/sass" > /dev/null
+  compass compile
+  popd > /dev/null
+
+  # add output to git index
+  git add css
+} 1>&2
+
+# output tree hash
+git write-tree --prefix=css
